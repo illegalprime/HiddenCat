@@ -82,7 +82,7 @@ QImage* Cipher::encodeImage() {
     return encodedImage;
 }
 
-QString Cipher::lazyDecode() {
+QString Cipher::decodeImage() {
     ushort character = 0x0000;
     int msgLen = 0;
 
@@ -126,6 +126,25 @@ QString Cipher::lazyDecode() {
 
     return decoded;
 }
+
+QImage* Cipher::noShameImage() {
+    QImage* encodedImage = new QImage(image.copy(0, 0, image.width(), image.height()));
+
+    for (int x = 0, y = 0, count = 0,
+        limit = message.length() * Cipher::bitsPerChar + 2; count < limit; ++count) {
+
+        encodedImage->setPixel(x, y, ~encodedImage->pixel(x, y));
+
+        if (++x == image.width()) {
+            x = 0;
+            if (++y == image.height()) {
+                return encodedImage;
+            }
+        }
+    }
+    return encodedImage;
+}
+
 /*int Cipher::findNullTerminator() {
     ushort character = 0x0000;
 

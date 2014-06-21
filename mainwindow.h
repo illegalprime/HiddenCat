@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QImage>
 #include <QFileDialog>
+#include <QMessageBox>
 #include "cipher.h"
 
 namespace Ui {
@@ -25,6 +26,10 @@ public slots:
     void onMessageChanged();
     void onBitsUsedCountChanged(int value);
     void onDecodeBtnClicked();
+    void onZoomChanged(int factor);
+    void onReleaseChckBx();
+    void onPressChckBx();
+    void onAboutBtnClicked();
 
 private:
     Ui::MainWindow *ui;

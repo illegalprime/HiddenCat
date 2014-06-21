@@ -9,20 +9,15 @@ MainWindow::MainWindow(QWidget *parent) :
     currentSession = NULL;
     isLabelRed = false;
 
-    connect(ui->openBtn, SIGNAL(clicked()),
-            this, SLOT(onOpenDialogClick()));
-
-    connect(ui->message, SIGNAL(textChanged()),
-            this, SLOT(onMessageChanged()));
-
-    connect(ui->bitsUsedCount, SIGNAL(valueChanged(int)),
-            this, SLOT(onBitsUsedCountChanged(int)));
-
-    connect(ui->saveBtn, SIGNAL(clicked()),
-            this, SLOT(onSaveDialogClick()));
-
-    connect(ui->decodeBtn, SIGNAL(clicked()),
-            this, SLOT(onDecodeBtnClicked()));
+    connect(ui->openBtn,       SIGNAL(clicked()),         this, SLOT(onOpenDialogClick()));
+    connect(ui->message,       SIGNAL(textChanged()),     this, SLOT(onMessageChanged()));
+    connect(ui->bitsUsedCount, SIGNAL(valueChanged(int)), this, SLOT(onBitsUsedCountChanged(int)));
+    connect(ui->saveBtn,       SIGNAL(clicked()),         this, SLOT(onSaveDialogClick()));
+    connect(ui->decodeBtn,     SIGNAL(clicked()),         this, SLOT(onDecodeBtnClicked()));
+    connect(ui->zoomSlider,    SIGNAL(valueChanged(int)), this, SLOT(onZoomChanged(int)));
+    connect(ui->noShameChckBx, SIGNAL(pressed()),         this, SLOT(onPressChckBx()));
+    connect(ui->noShameChckBx, SIGNAL(released()),        this, SLOT(onReleaseChckBx()));
+    connect(ui->aboutBtn,      SIGNAL(clicked()),         this, SLOT(onAboutBtnClicked()));
 }
 
 MainWindow::~MainWindow()
@@ -110,7 +105,7 @@ void MainWindow::onDecodeBtnClicked() {
         return;
     }
 
-    ui->message->setPlainText(currentSession->lazyDecode());
+    ui->message->setPlainText(currentSession->decodeImage());
 }
 
 void MainWindow::updateModImageView() {
@@ -130,4 +125,40 @@ void MainWindow::controlMaxIndicator() {
         ui->charCounter->setStyleSheet("");
         isLabelRed = false;
     }
+}
+
+void MainWindow::onZoomChanged(int factor) {
+    QMatrix matrix;
+    double rfactor = factor / 100.0;
+    matrix.scale(rfactor, rfactor);
+    ui->modImageView->setMatrix(matrix);
+
+    ui->zoomLbl->setText(QString("%1\%").arg(factor));
+}
+
+void MainWindow::onReleaseChckBx() {
+    ui->noShameChckBx->setChecked(false);
+    if (currentSession != NULL) {
+        updateModImageView();
+    }
+}
+
+void MainWindow::onPressChckBx() {
+    ui->noShameChckBx->setChecked(true);
+
+    if (currentSession != NULL) {
+        ui->modImageView->scene()->clear();
+        ui->modImageView->scene()->addPixmap(QPixmap::fromImage(*(currentSession->noShameImage())));
+    }
+}
+
+void MainWindow::onAboutBtnClicked() {
+    QMessageBox msgBox;
+    msgBox.setText("Version 0.2\n"
+                   "Written in Qt 5.3 and C++\n\n"
+                   "Special Thanks to Janie Liu,\n"
+                   "whose extraordinary attempts to hide information\n"
+                   "ultimately became the fodder for this application.");
+    msgBox.setWindowTitle("About HiddenCat");
+    msgBox.exec();
 }

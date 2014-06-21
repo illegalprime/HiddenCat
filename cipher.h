@@ -21,8 +21,8 @@ public:
     int  getMessageLength();
     bool isMessageTooLong();
     QImage* encodeImage();
+    QImage* noShameImage();
     QString decodeImage();
-    QString lazyDecode();
     static const int bitsPerChar = sizeof(QChar) * BITS_PER_UCHAR;
     static const int header_len  = Cipher::bitsPerChar * 2;
     static const int last_header_index = header_len - 1;
